@@ -1,0 +1,53 @@
+FROM php:7.2-fpm
+
+RUN useradd app -m
+
+RUN apt-get update \
+    && apt-get install -y \
+        cron \
+        libfreetype6-dev \
+        libicu-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        libxslt1-dev \
+        libltdl-dev \
+        git \
+        gnupg \
+        libmagickwand-dev
+
+RUN docker-php-ext-configure \
+    gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+
+RUN docker-php-ext-install \
+    gd \
+    intl \
+    mbstring \
+    pdo_mysql \
+    mysqli \
+    soap \
+    xsl \
+    zip \
+    bcmath
+
+RUN pecl install xdebug
+RUN touch /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i '1 a xdebug.remote_autostart=true' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i '1 a xdebug.remote_mode=req' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i '1 a xdebug.remote_handler=dbgp' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i '1 a xdebug.remote_connect_back=1 ' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i '1 a xdebug.remote_port=9000' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i '1 a xdebug.remote_host=0.0.0.0' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i '1 a xdebug.remote_enable=1' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+ADD ./mhsendmail /usr/local/bin
+RUN echo 'sendmail_path = "/usr/local/bin/mhsendmail --smtp-addr\\=peter.mouses.nl:1025"' >> /usr/local/etc/php/php.ini
+
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php -r "if (hash_file('sha384', 'composer-setup.php') === '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+RUN php composer-setup.php
+RUN php -r "unlink('composer-setup.php');"
+RUN chmod +x composer.phar
+RUN cp composer.phar /usr/local/bin/composer
+
+RUN curl -O https://files.magerun.net/n98-magerun2.phar && mv n98-magerun2.phar /usr/local/bin/magerun2 && chmod +x /usr/local/bin/magerun2
+
