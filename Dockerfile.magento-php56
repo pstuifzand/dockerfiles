@@ -31,17 +31,15 @@ RUN docker-php-ext-install \
 
 RUN a2enmod rewrite
 
-RUN sed -i '1 a memory_limit=2G' /usr/local/etc/php/conf.d/memory-limit.ini
+RUN touch /usr/local/etc/php/conf.d/memory-limit.ini && \
+  sed -i '1 a memory_limit=2G' /usr/local/etc/php/conf.d/memory-limit.ini
 
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php -r "if (hash_file('sha384', 'composer-setup.php') === '48e3236262b34d30969dca3c37281b3b4bbe3221bda826ac6a9a62d6444cdb0dcd0615698a5cbe587c3f0fe57a54d8f5') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
+    php composer-setup.php && \
+    php -r "unlink('composer-setup.php');" && \
+    chmod +x composer.phar && \
+    cp composer.phar /usr/local/bin/composer
 
-ADD ./mhsendmail /usr/local/bin
-RUN echo 'sendmail_path = "/usr/local/bin/mhsendmail --smtp-addr\\=peter.mouses.nl:1025"' >> /usr/local/etc/php/php.ini
-
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-RUN php -r "if (hash_file('SHA384', 'composer-setup.php') === '544e09ee996cdf60ece3804abc52599c22b1f40f4323403c44d44fdfdd586475ca9813a858088ffbc1f233e9b180f061') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-RUN php composer-setup.php
-RUN php -r "unlink('composer-setup.php');"
-RUN chmod +x composer.phar
-RUN cp composer.phar /usr/local/bin/composer
 RUN curl -o /usr/local/bin/magerun https://files.magerun.net/n98-magerun.phar && chmod +x /usr/local/bin/magerun
 
