@@ -41,13 +41,8 @@ RUN sed -i '1 a xdebug.remote_connect_back=1 ' /usr/local/etc/php/conf.d/docker-
 RUN sed -i '1 a xdebug.remote_port=9000' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN sed -i '1 a xdebug.remote_host=0.0.0.0' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN sed -i '1 a xdebug.remote_enable=1' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-
-RUN mkdir /usr/local/ioncube
-ADD ./ioncube/ioncube_loader_lin_5.6.so /usr/local/ioncube
-RUN echo 'zend_extension = /usr/local/ioncube/ioncube_loader_lin_5.6.so' > /usr/local/etc/php/php.ini
-
-ADD ./mhsendmail /usr/local/bin
-RUN echo 'sendmail_path = "/usr/local/bin/mhsendmail --smtp-addr\\=peter.mouses.nl:1025"' >> /usr/local/etc/php/php.ini
+RUN sed -i '1 a xdebug.profiler_enable_trigger=1' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i '1 a xdebug.profiler_output_dir=/var/www/html/profiles' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 RUN curl -o /usr/local/bin/magerun https://files.magerun.net/n98-magerun.phar && chmod +x /usr/local/bin/magerun
 
