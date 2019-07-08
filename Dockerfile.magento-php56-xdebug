@@ -12,6 +12,7 @@ RUN apt-get update \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libxslt1-dev \
+        libpng-dev \
         git
 
 RUN docker-php-ext-configure \
