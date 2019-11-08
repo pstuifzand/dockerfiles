@@ -1,6 +1,7 @@
 FROM php:7.1
 
 RUN useradd app -m
+RUN mkdir /var/www
 RUN chgrp www-data /var/www
 RUN chmod g+rw /var/www
 
@@ -14,11 +15,12 @@ RUN apt-get update \
         libpng-dev \
         libxslt1-dev \
         libltdl-dev \
+        libssl-dev \
         git \
         procps \
         vim-nox \
         gnupg \
-        mysql-client
+        default-mysql-client
 
 RUN docker-php-ext-configure \
     gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/

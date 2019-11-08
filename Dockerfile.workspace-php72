@@ -19,6 +19,7 @@ RUN apt-get update \
         vim-nox \
         procps \
         gnupg \
+        default-mysql-client \
         libsodium-dev
 
 RUN docker-php-ext-configure \
@@ -34,6 +35,7 @@ RUN docker-php-ext-install \
     xsl \
     zip \
     bcmath \
+    phar \
     sodium
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
