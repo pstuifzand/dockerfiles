@@ -3,7 +3,7 @@ FROM php:7.1
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN useradd app -m          && \
-    mkdir /var/www          && \
+    mkdir -p /var/www       && \
     chgrp www-data /var/www && \
     chmod g+rw /var/www
 
