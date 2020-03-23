@@ -65,7 +65,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
 
 RUN curl -O https://files.magerun.net/n98-magerun2-3.2.0.phar && mv n98-magerun2-3.2.0.phar /usr/local/bin/magerun2 && chmod +x /usr/local/bin/magerun2
 
-RUN (curl -sL https://deb.nodesource.com/setup_8.x | bash -) \
+RUN (curl -sL https://deb.nodesource.com/setup_10.x | bash -) \
     && apt-get install -y --no-install-recommends \
           nodejs \
           npm \
